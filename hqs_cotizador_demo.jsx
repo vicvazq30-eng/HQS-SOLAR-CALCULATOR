@@ -1,9 +1,40 @@
-import React, { useMemo, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
+function Card({ children, className = '', style = {} }) {
+  return <div className={className} style={style}>{children}</div>;
+}
 
+function CardContent({ children, className = '', style = {} }) {
+  return <div className={className} style={style}>{children}</div>;
+}
+
+function CardHeader({ children, className = '', style = {} }) {
+  return <div className={className} style={style}>{children}</div>;
+}
+
+function CardTitle({ children, className = '', style = {} }) {
+  return <div className={className} style={style}>{children}</div>;
+}
+
+function Input(props) {
+  return <input {...props} />;
+}
+
+function Label({ children, className = '', ...props }) {
+  return <label className={className} {...props}>{children}</label>;
+}
+
+function Progress({ value = 0, className = '' }) {
+  return (
+    <div className={className + ' bg-slate-200 rounded-full overflow-hidden'}>
+      <div
+        className="h-full rounded-full"
+        style={{
+          width: `${value}%`,
+          background: 'linear-gradient(90deg, #123B8C, #E3B93C)',
+        }}
+      />
+    </div>
+  );
+}
 const hqs = {
   navy: '#07142F',
   blue: '#123B8C',
