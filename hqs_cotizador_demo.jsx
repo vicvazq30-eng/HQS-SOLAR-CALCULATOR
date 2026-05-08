@@ -16,11 +16,27 @@ function CardTitle({ children, className = '', style = {} }) {
   return <div className={className} style={style}>{children}</div>;
 }
 
-function Input({ className = '', ...props }) {
+function Input({ ...props }) {
   return (
     <input
       {...props}
-      className={`w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-medium text-slate-800 shadow-sm outline-none transition-all placeholder:text-slate-400 focus:border-yellow-400 focus:bg-white focus:ring-4 focus:ring-yellow-100`}
+      className="
+        w-full
+        h-12
+        rounded-xl
+        border
+        border-slate-300
+        bg-white
+        px-4
+        text-sm
+        text-slate-800
+        shadow-sm
+        transition-all
+        outline-none
+        focus:border-yellow-400
+        focus:ring-2
+        focus:ring-yellow-100
+      "
     />
   );
 }
