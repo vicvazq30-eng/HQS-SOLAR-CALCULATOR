@@ -16,30 +16,36 @@ function CardTitle({ children, className = '', style = {} }) {
   return <div className={className} style={style}>{children}</div>;
 }
 
-function Input({ ...props }) {
+function Input(props) {
   return (
     <input
       {...props}
-      className="
-        w-full
-        h-12
-        rounded-xl
-        border
-        border-slate-300
-        bg-white
-        px-4
-        text-sm
-        text-slate-800
-        shadow-sm
-        transition-all
-        outline-none
-        focus:border-yellow-400
-        focus:ring-2
-        focus:ring-yellow-100
-      "
+      style={{
+        width: '100%',
+        height: '52px',
+        borderRadius: '16px',
+        border: '1px solid #D7DEE7',
+        background: '#FFFFFF',
+        padding: '0 18px',
+        fontSize: '15px',
+        fontWeight: '500',
+        color: '#0F172A',
+        outline: 'none',
+        boxShadow: '0 2px 6px rgba(15,23,42,0.04)',
+        transition: 'all 0.2s ease',
+      }}
+      onFocus={(e) => {
+        e.target.style.border = '1px solid #E3B93C';
+        e.target.style.boxShadow = '0 0 0 4px rgba(227,185,60,0.15)';
+      }}
+      onBlur={(e) => {
+        e.target.style.border = '1px solid #D7DEE7';
+        e.target.style.boxShadow = '0 2px 6px rgba(15,23,42,0.04)';
+      }}
     />
   );
 }
+
 function Label({ children, className = '', ...props }) {
   return (
     <label
@@ -480,9 +486,41 @@ export default function HQSCotizadorDemo() {
 
                 <div className="rounded-2xl overflow-hidden mb-4">
                   <div className="text-white p-8 text-center" style={{ background: `linear-gradient(135deg, ${hqs.navy}, ${hqs.blue})` }}>
-                    <div className="text-6xl font-bold" style={{ color: hqs.gold }}>{estimatedPanels}</div>
-                    <div className="text-lg font-semibold">PANELES SOLARES</div>
-                    <div className="text-sm text-slate-300">Qcells 410W</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div
+                        style={{
+                          fontSize: '92px',
+                          fontWeight: '900',
+                          lineHeight: '0.95',
+                          color: hqs.gold,
+                          letterSpacing: '-4px',
+                        }}
+                      >
+                        {estimatedPanels}
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '800',
+                          letterSpacing: '4px',
+                          textTransform: 'uppercase',
+                          color: '#FFFFFF',
+                        }}
+                      >
+                        Paneles Solares Recomendados
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: '#CBD5E1',
+                          fontWeight: '500',
+                        }}
+                      >
+                        Sistema estimado • Qcells 410W
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -615,4 +653,3 @@ export default function HQSCotizadorDemo() {
     </div>
   );
 }
-
