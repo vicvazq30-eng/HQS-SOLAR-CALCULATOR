@@ -20,7 +20,7 @@ function Input(props) {
   return (
     <input
       {...props}
-      className={`w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 ${
+      className={`w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-medium text-slate-800 shadow-sm outline-none transition-all placeholder:text-slate-400 focus:border-yellow-400 focus:bg-white focus:ring-4 focus:ring-yellow-100 ${
         props.className || ''
       }`}
     />
