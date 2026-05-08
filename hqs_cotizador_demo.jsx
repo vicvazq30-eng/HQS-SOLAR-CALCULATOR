@@ -28,7 +28,14 @@ function Input(props) {
 }
 
 function Label({ children, className = '', ...props }) {
-  return <label className={className} {...props}>{children}</label>;
+  return (
+    <label
+      className={`block text-sm font-semibold text-slate-700 mb-2 ${className}`}
+      {...props}
+    >
+      {children}
+    </label>
+  );
 }
 
 function Progress({ value = 0, className = '' }) {
