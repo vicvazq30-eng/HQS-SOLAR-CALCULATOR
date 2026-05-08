@@ -17,7 +17,14 @@ function CardTitle({ children, className = '', style = {} }) {
 }
 
 function Input(props) {
-  return <input {...props} />;
+  return (
+    <input
+      {...props}
+      className={`w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 ${
+        props.className || ''
+      }`}
+    />
+  );
 }
 
 function Label({ children, className = '', ...props }) {
