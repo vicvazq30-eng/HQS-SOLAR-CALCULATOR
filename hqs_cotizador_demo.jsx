@@ -22,25 +22,27 @@ function Input(props) {
       {...props}
       style={{
         width: '100%',
-        height: '52px',
-        borderRadius: '16px',
-        border: '1px solid #D7DEE7',
-        background: '#FFFFFF',
+        height: '54px',
+        borderRadius: '6px',
+        border: '1px solid transparent',
+        background: '#F4F4F4',
         padding: '0 18px',
         fontSize: '15px',
         fontWeight: '500',
-        color: '#0F172A',
+        color: '#111827',
         outline: 'none',
-        boxShadow: '0 2px 6px rgba(15,23,42,0.04)',
+        boxShadow: 'none',
         transition: 'all 0.2s ease',
       }}
       onFocus={(e) => {
-        e.target.style.border = '1px solid #E3B93C';
-        e.target.style.boxShadow = '0 0 0 4px rgba(227,185,60,0.15)';
+        e.target.style.background = '#FFFFFF';
+        e.target.style.border = '1px solid #1F2937';
+        e.target.style.boxShadow = '0 0 0 1px #1F2937';
       }}
       onBlur={(e) => {
-        e.target.style.border = '1px solid #D7DEE7';
-        e.target.style.boxShadow = '0 2px 6px rgba(15,23,42,0.04)';
+        e.target.style.background = '#F4F4F4';
+        e.target.style.border = '1px solid transparent';
+        e.target.style.boxShadow = 'none';
       }}
     />
   );
@@ -49,7 +51,7 @@ function Input(props) {
 function Label({ children, className = '', ...props }) {
   return (
     <label
-      className={`block text-sm font-semibold text-slate-700 mb-2 ${className}`}
+      className={`block text-xs font-bold uppercase tracking-wide text-slate-600 mb-1 ${className}`}
       {...props}
     >
       {children}
@@ -222,6 +224,32 @@ export default function HQSCotizadorDemo() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState('idle');
 
+  const progress = useMemo(() => {
+    const fields = [
+      form.name,
+      form.town,
+      form.email,
+      form.phone,
+      form.owner,
+      form.roof,
+      form.roofCondition,
+      form.bill1,
+      form.bill2,
+      form.bill3,
+      form.backup,
+      form.battery,
+      form.investment,
+      form.financing,
+      form.warranty,
+      form.credit,
+      form.install,
+      form.reason,
+    ];
+
+    const completed = fields.filter((value) => String(value || '').trim() !== '').length;
+    return Math.round((completed / fields.length) * 100);
+  }, [form]);
+
   const avg = useMemo(() => {
     const values = [form.bill1, form.bill2, form.bill3].map((v) => Number(v) || 0);
     const valid = values.filter((v) => v > 0);
@@ -351,9 +379,9 @@ export default function HQSCotizadorDemo() {
           <div className="min-w-[220px] space-y-2 rounded-2xl border border-slate-200 p-4">
             <div className="flex items-center justify-between text-sm text-slate-600">
               <span>Progreso</span>
-              <span>78%</span>
+              <span>{progress}%</span>
             </div>
-            <Progress value={78} className="h-2" />
+            <Progress value={progress} className="h-2" />
           </div>
         </div>
 
@@ -653,3 +681,4 @@ export default function HQSCotizadorDemo() {
     </div>
   );
 }
+
