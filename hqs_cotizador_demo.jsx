@@ -171,7 +171,7 @@ function PillGroup({ label, value, setValue, options }) {
   return (
     <div className="space-y-3 md:col-span-1">
       <Label className="text-sm font-semibold text-slate-800">{label}</Label>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 px-2 sm:grid-cols-2">
         {options.map((option) => {
           const active = value === option;
           return (
@@ -179,7 +179,7 @@ function PillGroup({ label, value, setValue, options }) {
               key={option}
               type="button"
               onClick={() => setValue(option)}
-              className={`rounded-2xl border px-4 py-3 text-left text-sm transition-all flex items-center justify-center gap-3 ${
+              className={`rounded-2xl border px-6 py-4 text-left text-sm transition-all flex items-center justify-center gap-3 ${
                 active
                   ? 'border-transparent text-white shadow-2xl scale-105 ring-4 ring-yellow-300/40'
                   : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
@@ -259,10 +259,12 @@ export default function HQSCotizadorDemo() {
 
   // Producción base: 10 paneles = 5,986 kWh/año (valor real de referencia)
   const targetOffset = 1.2;
-  const targetAnnualConsumption = avg * 12 * targetOffset;
-  const estimatedPanels = Math.max(4, Math.round((targetAnnualConsumption / 5986) * 10));
+  const annualConsumption = avg * 12;
+  const targetAnnualProduction = annualConsumption * targetOffset;
+  const estimatedPanels = Math.max(4, Math.round((targetAnnualProduction / 5986) * 10));
   const annualProduction = Math.round((estimatedPanels / 10) * 5986);
   const monthlyProduction = Math.round(annualProduction / 12);
+  const coveragePercent = annualConsumption > 0 ? Math.round((annualProduction / annualConsumption) * 100) : 0;
 
   const tests = useMemo(() => {
     const sampleAvg = Math.round((620 + 575 + 640) / 3);
@@ -296,7 +298,7 @@ export default function HQSCotizadorDemo() {
       bill2: form.bill2,
       bill3: form.bill3,
       averageConsumption: avg,
-      annualConsumption: avg * 12,
+      annualConsumption,
       estimatedPanels,
       annualProduction,
       backup: form.backup,
@@ -498,6 +500,19 @@ export default function HQSCotizadorDemo() {
             <Card className="rounded-[32px] border-0 shadow-2xl bg-white overflow-hidden">
               <CardContent className="p-6">
                 <div className="text-center mb-6">
+                  <div
+                    className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-5"
+                    style={{
+                      background: '#FEF3C7',
+                      color: '#92400E',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    Basado en paneles Qcells 410W • Producción real estimada
+                  </div>
                   <div className="text-4xl font-extrabold" style={{ color: hqs.gold }}>
                     {monthlyProduction} kWh / mes
                   </div>
@@ -546,9 +561,47 @@ export default function HQSCotizadorDemo() {
                           fontWeight: '500',
                         }}
                       >
-                        Sistema estimado • Qcells 410W
+                        Configuración recomendada HQS
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                <div
+                  className="rounded-2xl p-5 mb-5"
+                  style={{
+                    background: 'linear-gradient(135deg, #EFF6FF, #FFFFFF)',
+                    border: '1px solid #DBEAFE',
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <div className="text-xs font-bold uppercase tracking-wide text-blue-700">
+                        Cobertura estimada
+                      </div>
+                      <div className="text-3xl font-extrabold text-slate-900">
+                        {coveragePercent}%
+                      </div>
+                    </div>
+
+                    <div
+                      className="rounded-2xl px-4 py-3 text-right"
+                      style={{
+                        background: '#FFFFFF',
+                        border: '1px solid #DBEAFE',
+                      }}
+                    >
+                      <div className="text-xs text-slate-500 uppercase tracking-wide">
+                        Consumo anual estimado
+                      </div>
+                      <div className="text-lg font-bold text-slate-900">
+                        {annualConsumption.toLocaleString()} kWh
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-sm text-slate-600 leading-relaxed">
+                    El cálculo busca una meta cercana al 120% de cobertura. La producción final puede quedar levemente por encima porque se redondea a paneles completos.
                   </div>
                 </div>
 
