@@ -10,6 +10,10 @@ const hqs = {
   slate: '#5E687A',
 };
 
+const WATTS_PER_PANEL = 410;
+const SUN_HOURS_ANNUAL = 1440;
+const PRODUCTION_PER_PANEL_ANNUAL = (WATTS_PER_PANEL * SUN_HOURS_ANNUAL) / 1000;
+
 function Card({ children, className = '', style = {} }) {
   return <div className={className} style={style}>{children}</div>;
 }
@@ -153,6 +157,7 @@ function PillGroup({ label, value, setValue, options }) {
 export default function HQSCotizadorDemo() {
   const [form, setForm] = useState({
     name: 'Carlos Rivera',
+    consultant: '',
     owner: 'Sí',
     roof: 'Cemento',
     email: 'carlos@email.com',
@@ -178,6 +183,7 @@ export default function HQSCotizadorDemo() {
   const progress = useMemo(() => {
     const fields = [
       form.name,
+      form.consultant,
       form.town,
       form.email,
       form.phone,
@@ -207,15 +213,14 @@ export default function HQSCotizadorDemo() {
     return Math.round(valid.reduce((a, b) => a + b, 0) / valid.length);
   }, [form.bill1, form.bill2, form.bill3]);
 
-  const targetOffset = 1.2;
   const annualConsumption = avg * 12;
-  const targetAnnualProduction = annualConsumption * targetOffset;
-  const estimatedPanels = Math.max(4, Math.round((targetAnnualProduction / 5986) * 10));
-  const annualProduction = Math.round((estimatedPanels / 10) * 5986);
+  const estimatedPanels = Math.max(4, Math.ceil(annualConsumption / PRODUCTION_PER_PANEL_ANNUAL));
+  const systemKw = (estimatedPanels * WATTS_PER_PANEL) / 1000;
+  const annualProduction = Math.round(estimatedPanels * PRODUCTION_PER_PANEL_ANNUAL);
   const monthlyProduction = Math.round(annualProduction / 12);
   const coveragePercent = annualConsumption > 0 ? Math.round((annualProduction / annualConsumption) * 100) : 0;
-
-  
+  const targetPanels120 = annualConsumption > 0 ? Math.max(4, Math.ceil((annualConsumption * 1.2) / PRODUCTION_PER_PANEL_ANNUAL)) : 4;
+  const extraPanelsFor120 = Math.max(targetPanels120 - estimatedPanels, 0);
 
   const updateForm = (key, value) => setForm((current) => ({ ...current, [key]: value }));
 
@@ -232,6 +237,7 @@ export default function HQSCotizadorDemo() {
       email: form.email,
       phone: form.phone,
       town: form.town,
+      consultant: form.consultant,
       owner: form.owner,
       roof: form.roof,
       roofCondition: form.roofCondition,
@@ -242,7 +248,6 @@ export default function HQSCotizadorDemo() {
       annualConsumption,
       estimatedPanels,
       annualProduction,
-      
       backup: form.backup,
       battery: form.battery,
       investment: form.investment,
@@ -353,6 +358,10 @@ export default function HQSCotizadorDemo() {
                   <PillGroup label="Tipo de techo" value={form.roof} setValue={(roof) => updateForm('roof', roof)} options={roofOptions} />
                 </div>
                 <PillGroup label="¿El techo está en buenas condiciones?" value={form.roofCondition} setValue={(roofCondition) => updateForm('roofCondition', roofCondition)} options={['Sí', 'Necesita reparación', 'No estoy seguro']} />
+                <div className="space-y-2">
+                  <Label>Nombre del consultor o persona que te refirió</Label>
+                  <Input value={form.consultant} onChange={(e) => updateForm('consultant', e.target.value)} placeholder="Ej: Juan Pérez" />
+                </div>
               </CardContent>
             </Card>
 
@@ -423,14 +432,15 @@ export default function HQSCotizadorDemo() {
                     <div className="text-sm font-bold uppercase tracking-[0.25em] text-white/80">Sistema HQS recomendado</div>
                     <div className="mt-3 text-[92px] font-black leading-none tracking-tight" style={{ color: hqs.gold }}>{estimatedPanels}</div>
                     <div className="text-sm font-extrabold tracking-[0.25em] uppercase text-white">Paneles Qcells 410W</div>
-                    <div className="mt-2 text-sm text-slate-300">+ batería {form.battery}</div>
+                    <div className="mt-2 text-sm text-slate-300">Sistema estimado: {systemKw.toFixed(2)} kW</div>
+                    <div className="mt-1 text-sm text-slate-300">+ batería {form.battery}</div>
                   </div>
                 </div>
 
                 <div className="rounded-2xl p-5 mb-5" style={{ background: 'linear-gradient(135deg, #EFF6FF, #FFFFFF)', border: '1px solid #DBEAFE' }}>
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <div className="text-xs font-bold uppercase tracking-wide text-blue-700">Cobertura estimada</div>
+                      <div className="text-xs font-bold uppercase tracking-wide text-blue-700">Offset estimado</div>
                       <div className="text-3xl font-extrabold text-slate-900">{coveragePercent}%</div>
                     </div>
                     <div className="rounded-2xl px-4 py-3 text-right" style={{ background: '#FFFFFF', border: '1px solid #DBEAFE' }}>
@@ -439,7 +449,9 @@ export default function HQSCotizadorDemo() {
                     </div>
                   </div>
                   <div className="text-sm text-slate-600 leading-relaxed">
-                    Tu hogar podría reducir significativamente su dependencia de LUMA y protegerse mejor contra apagones con una solución solar diseñada por HQS.
+                    {extraPanelsFor120 > 0
+                      ? `Para acercarte a un 120% de offset, recomendamos añadir ${extraPanelsFor120} paneles más.`
+                      : 'Este sistema ya está cerca o por encima del 120% de offset recomendado.'}
                   </div>
                 </div>
 
@@ -449,9 +461,12 @@ export default function HQSCotizadorDemo() {
                     {[
                       ['Nombre', form.name],
                       ['Pueblo / Ciudad', form.town],
+                      ['Consultor / Referido', form.consultant || 'No indicado'],
                       ['Propiedad', form.owner === 'Sí' ? 'Casa propia' : 'No propia'],
                       ['Tipo de techo', form.roof],
                       ['Consumo promedio', `${avg} kWh`],
+                      ['Sistema estimado', `${systemKw.toFixed(2)} kW`],
+                      ['Offset estimado', `${coveragePercent}%`],
                       ['Batería', form.battery],
                       ['Financiamiento', form.financing],
                     ].map(([label, value]) => (
