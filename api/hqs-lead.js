@@ -30,6 +30,10 @@ export default async function handler(req, res) {
   formData.append("q23_rangoDe", data.credit || "");
   formData.append("q24_cuanPronto", data.install || "");
   formData.append("q25_motivoPrincipal", data.reason || "");
+  formData.append("q26_nombreDel", data.consultant || "");
+  formData.append("q27_sistemaEstimado", String(data.systemKw || ""));
+  formData.append("q28_offsetEstimado", String(data.coveragePercent || ""));
+  formData.append("q29_recomendacion120", data.offsetRecommendation || "");
 
   const response = await fetch("https://submit.jotform.com/submit/261265337438057", {
     method: "POST",
